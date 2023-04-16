@@ -1,16 +1,21 @@
 {% extends 'todoapp/layout.html' %}
 
 {% block content %}
-
 <div style="margin-top: 50px;" class="ui container">
     <h1 class="ui center aligned header">My task manager</h1>
     <h3 class="test_style">Manage your time!</h3>
+    {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    {% endif %}
     <form class="ui form" action="{% url 'add' %}" method="post">
         {% csrf_token %}
         <div class="field">
             <label>New task</label>
             <input type="text" name="title" placeholder="Enter task title">
             <input type="text" name="description" placeholder="Enter task description">
+            <input type="date" name="deadline" placeholder="Enter deadline title">
         </div>
         <button class="ui teal basic button" type="submit">Add</button>
     </form>
@@ -19,24 +24,17 @@
 
 {% for todo in todolist %}
 <div class="ui segment">
-    <p class="ui big header">{{ todo.title }} - {{ todo.description }}</p>
+    <p class="ui big header">{{todo.deadline}}:{{ todo.title }} - {{ todo.description }}</p>
     {% if todo.is_complete == False %}
     <span class="ui gray label">Not complete</span>
     <a class="ui primary basic button" href="{% url 'update' todo_id=todo.id %}">Close</a>
     {% else %}
-    <span class="ui green label">Complete</span>
     <a class="ui blue button" href="{% url 'update' todo_id=todo.id %}">Open</a>
     {% endif %}
+    <a class="ui yellow basic button" href="{% url 'edit' todo_id=todo.id %}">Edit</a>
     <a class="ui negative basic button" href="{% url 'delete' todo_id=todo.id %}">Delete</a>
-    <form class="ui form" action="{% url 'edit' todo_id=todo.id %}" method="post">
-        {% csrf_token %}
-        <div class="field">
-            <label>Edit task</label>
-            <input type="text" name="title" placeholder="Enter new task title">
-            <input type="text" name="description" placeholder="Enter new task description">
-        </div>
-        <button class="ui teal basic button" type="submit">Edit</button>
-    </form>
+
+
 </div>
 {% endfor %}
 
